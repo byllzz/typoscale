@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { useStore } from '../store/useStore'
 import { FontPicker } from './FontPicker'
 import { SCALE_RATIOS } from '../types'
