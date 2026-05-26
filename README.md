@@ -1,73 +1,151 @@
-# React + TypeScript + Vite
+# TypoScale
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Generate beautiful type scales, pair Google Fonts, and export ready-to-use CSS & Tailwind tokens.**
 
-Currently, two official plugins are available:
+![TypoScale screenshot](https://via.placeholder.com/1200x630/0c0a09/f59e0b?text=TypoScale)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **Google Fonts browser** — search and preview 1000+ fonts by category
+- **Font pairing** — separate pickers for display, body, and monospace
+- **Scale algorithms** — Minor Second, Major Third, Perfect Fourth, Golden Ratio, and custom ratios
+- **Live preview** — editorial layout showing every scale step in your chosen fonts
+- **WCAG contrast badges** — AA/AAA pass/fail per scale step
+- **Token output** in four formats:
+  - CSS Custom Properties
+  - Tailwind CSS v3 (`theme.extend.fontSize`)
+  - Tailwind CSS v4 (`@theme`)
+  - Style Dictionary JSON
+- **Shareable URLs** — scale config encoded in query params, copy with one click
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Quick start
 
-## Expanding the ESLint configuration
+```bash
+# 1. Clone
+git clone https://github.com/yourusername/typoscale.git
+cd typoscale
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+# 2. Install
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# 3. Add your Google Fonts API key (optional — falls back to curated list)
+cp .env.local.example .env.local
+# Edit .env.local and add: VITE_GOOGLE_FONTS_KEY=your_key_here
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 4. Start dev server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open [http://localhost:3000](http://localhost:3000).
 
+## Get a Google Fonts API key
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create or select a project
+3. Navigate to **APIs & Services → Library**
+4. Search for **"Web Fonts Developer API"** and enable it
+5. Go to **APIs & Services → Credentials → Create Credentials → API Key**
+6. Copy the key into `.env.local` as `VITE_GOOGLE_FONTS_KEY`
+
+The app works without a key — it falls back to a curated list of 28 popular fonts.
+
+## Deploy to Vercel
+
+```bash
+npm install -g vercel
+vercel --prod
+```
+
+Add `VITE_GOOGLE_FONTS_KEY` in Vercel's dashboard under **Settings → Environment Variables**.
+
+One-click deploy:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/typoscale)
+
+## Project structure
+
+```
+src/
+├── components/
+│   ├── FontPicker.tsx      # Searchable Google Fonts dropdown
+│   ├── ScaleControls.tsx   # Left sidebar with all controls
+│   ├── ScaleTable.tsx      # Scale steps table with WCAG badges
+│   ├── PreviewPane.tsx     # Editorial live preview
+│   ├── TokenOutput.tsx     # Code output with syntax highlight
+│   ├── MainArea.tsx        # Right panel layout
+│   └── PrismTheme.tsx      # Syntax highlight theme
+├── hooks/
+│   ├── useFonts.ts         # Google Fonts API + search
+│   ├── useTypeScale.ts     # Reactive scale computation
+│   └── useClipboard.ts     # Copy to clipboard
+├── utils/
+│   ├── scaleAlgorithms.ts  # Pure scale math
+│   ├── tokenGenerators.ts  # CSS/Tailwind/JSON output
+│   └── contrast.ts         # WCAG contrast calculation
+├── store/
+│   └── useStore.ts         # Zustand state + URL persistence
+└── types/
+    └── index.ts            # Shared TypeScript types
+```
+
+## Token output examples
+
+### CSS Custom Properties
+```css
+:root {
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Source Sans 3', system-ui, sans-serif;
+  --font-size-base: 1rem; /* 16px */
+  --font-size-xl: 1.333rem; /* 21.33px */
+  --font-size-2xl: 1.777rem; /* 28.44px */
+}
+```
+
+### Tailwind v3
 ```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
+module.exports = {
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['Playfair Display', 'Georgia', 'serif'],
       },
-      // other options...
+      fontSize: {
+        base: ['1rem', { lineHeight: '1.5', letterSpacing: '0em' }],
+        xl:   ['1.333rem', { lineHeight: '1.3', letterSpacing: '0em' }],
+      },
     },
   },
-])
+}
 ```
+
+### Tailwind v4
+```css
+@import "tailwindcss";
+
+@theme {
+  --font-family-display: 'Playfair Display', Georgia, serif;
+  --font-size-base: 1rem;
+  --font-size-xl: 1.333rem;
+}
+```
+
+## Keyboard shortcuts
+
+| Key | Action |
+|-----|--------|
+| `Ctrl/Cmd + C` | Copy current token output |
+| `Ctrl/Cmd + D` | Toggle dark preview |
+
+## Contributing
+
+1. Fork the repo
+2. Create a branch: `git checkout -b feat/your-feature`
+3. Commit your changes: `git commit -m 'feat: add your feature'`
+4. Push: `git push origin feat/your-feature`
+5. Open a Pull Request
+
+Please run `npm run type-check && npm run lint` before opening a PR.
+
+## License
+
+MIT © 2024 — see [LICENSE](LICENSE) for details.
