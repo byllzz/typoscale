@@ -1,8 +1,7 @@
 import { create } from 'zustand'
-import type { ScaleRatio } from '../types/scale';
-import type { OutputFormat } from '../types/output';
-import type { AppState, AppStore } from '../types/store.types';
-
+import type { ScaleRatio } from '../types/scale'
+import type { OutputFormat } from '../types/output'
+import type { AppState, AppStore } from '../types/store.types'
 
 function encodeState(state: Partial<AppState>): string {
   const params = new URLSearchParams()
@@ -29,6 +28,22 @@ function decodeState(): Partial<AppState> {
 
 const urlState = decodeState()
 
+let urlUpdateTimer: ReturnType<typeof setTimeout> | undefined
+
+function debouncedUpdateURL(state: AppStore) {
+  if (urlUpdateTimer) clearTimeout(urlUpdateTimer)
+  urlUpdateTimer = setTimeout(() => {
+    updateURL(state)
+    urlUpdateTimer = undefined
+  }, 120)
+}
+
+function updateURL(state: AppStore) {
+  const qs = encodeState(state)
+  const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname
+  window.history.replaceState(null, '', newUrl)
+}
+
 export const useStore = create<AppStore>((set, get) => ({
   displayFont: urlState.displayFont ?? 'Playfair Display',
   bodyFont: urlState.bodyFont ?? 'Source Sans 3',
@@ -44,37 +59,31 @@ export const useStore = create<AppStore>((set, get) => ({
 
   setDisplayFont: (displayFont) => {
     set({ displayFont })
-    updateURL(get())
+    debouncedUpdateURL(get())
   },
   setBodyFont: (bodyFont) => {
     set({ bodyFont })
-    updateURL(get())
+    debouncedUpdateURL(get())
   },
   setMonoFont: (monoFont) => set({ monoFont }),
   setBaseSize: (baseSize) => {
     set({ baseSize })
-    updateURL(get())
+    debouncedUpdateURL(get())
   },
   setRatio: (ratio) => {
     set({ ratio })
-    updateURL(get())
+    debouncedUpdateURL(get())
   },
   setCustomRatio: (customRatio) => {
     set({ customRatio })
-    updateURL(get())
+    debouncedUpdateURL(get())
   },
   setSteps: (steps) => {
     set({ steps })
-    updateURL(get())
+    debouncedUpdateURL(get())
   },
   setPreviewText: (previewText) => set({ previewText }),
   setDarkMode: (darkMode) => set({ darkMode }),
   setOutputFormat: (outputFormat) => set({ outputFormat }),
   setActiveTab: (activeTab) => set({ activeTab }),
 }))
-
-function updateURL(state: AppStore) {
-  const qs = encodeState(state)
-  const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname
-  window.history.replaceState(null, '', newUrl)
-}
