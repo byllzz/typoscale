@@ -44,32 +44,34 @@ export function TokenOutput({ steps }: TokenOutputProps) {
 
   return (
     <div className="rounded-xl overflow-hidden border border-stone-800 bg-stone-950 flex flex-col">
-      {/* Format tabs */}
-      <div className="flex border-b border-stone-800 bg-stone-950">
-        {FORMAT_TABS.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setOutputFormat(tab.id)}
-            className={`flex items-center gap-2 px-5 py-3.5 text-sm font-medium transition-colors border-b-2 ${
-              outputFormat === tab.id
-                ? 'border-amber-500 text-amber-400 bg-stone-900'
-                : 'border-transparent text-stone-400 hover:text-stone-200'
-            }`}
-          >
-            {tab.label}
-            {tab.badge && (
-              <span className="text-xs px-1.5 py-0.5 bg-amber-500/20 text-amber-400 rounded font-medium">
-                {tab.badge}
-              </span>
-            )}
-          </button>
-        ))}
+      {/* Format tabs  */}
+      <div className="flex flex-wrap items-center border-b border-stone-800 bg-stone-950">
+        <div className="flex flex-wrap">
+          {FORMAT_TABS.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setOutputFormat(tab.id)}
+              className={`flex items-center gap-2 px-3 sm:px-5 py-3 text-sm font-medium transition-colors border-b-2 ${
+                outputFormat === tab.id
+                  ? 'border-amber-500 text-amber-400 bg-stone-900'
+                  : 'border-transparent text-stone-400 hover:text-stone-200'
+              }`}
+            >
+              {tab.label}
+              {tab.badge && (
+                <span className="text-xs px-1.5 py-0.5 bg-amber-500/20 text-amber-400 rounded font-medium">
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
 
-        {/* Copy button */}
-        <div className="flex-1 flex justify-end items-center px-4">
+        {/* Copy button  */}
+        <div className="flex-1 flex justify-end items-center px-3 sm:px-4 py-2 sm:py-0">
           <button
             onClick={() => copy(tokenString)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
               copied
                 ? 'bg-green-900/50 text-green-400 border border-green-800'
                 : 'bg-stone-800 text-stone-300 border border-stone-700 hover:border-amber-500/50 hover:text-amber-400'
@@ -95,9 +97,9 @@ export function TokenOutput({ steps }: TokenOutputProps) {
         </div>
       </div>
 
-      {/* Code */}
+      {/* Code  */}
       <div className="overflow-auto flex-1 min-h-0">
-        <pre className="p-6 text-sm leading-relaxed m-0 bg-transparent">
+        <pre className="p-4 sm:p-6 text-sm leading-relaxed m-0 bg-transparent">
           <code
             ref={codeRef}
             className={`language-${language}`}
@@ -106,12 +108,12 @@ export function TokenOutput({ steps }: TokenOutputProps) {
       </div>
 
       {/* Footer info */}
-      <div className="border-t border-stone-800 px-6 py-3 flex items-center justify-between">
+      <div className="border-t border-stone-800 px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <span className="text-xs text-stone-500">
           {steps.length} steps · {displayFont} + {bodyFont}
         </span>
         <a
-          href="https://github.com/yourusername/typoscale"
+          href="https://github.com/byllzz/typoscale"
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-stone-600 hover:text-stone-400 transition-colors flex items-center gap-1"
