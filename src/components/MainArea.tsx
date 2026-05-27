@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useStore } from '../store/useStore'
 import { useTypeScale } from '../hooks/useTypeScale'
-import { ScaleTable } from './ScaleTable'
 import { PreviewPane } from './PreviewPane'
 import { TokenOutput } from './TokenOutput'
 import { SCALE_RATIOS } from '../types'
@@ -65,7 +64,7 @@ export function MainArea() {
             ))}
           </div>
 
-          {/* Preset Manager Button with Label */}
+          {/* Preset Manager Button */}
           <button
             onClick={() => setIsPresetManagerOpen(true)}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200 ${
@@ -82,7 +81,7 @@ export function MainArea() {
             <span className="text-xs font-medium hidden sm:inline">Presets</span>
           </button>
 
-          {/* Theme Toggle with Label */}
+          {/* Theme Toggle */}
           <button
             onClick={() => setDarkMode(!darkMode)}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200 ${
@@ -106,7 +105,7 @@ export function MainArea() {
             </span>
           </button>
 
-          {/* GitHub Link with Label */}
+          {/* GitHub Link */}
           <a
             href="https://github.com/byllzz/typoscale"
             target="_blank"
@@ -127,17 +126,10 @@ export function MainArea() {
       </div>
 
       {/* Primary content */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-3">
         {activeTab === 'preview' ? (
-          <div className="space-y-6 max-w-[1600px] mx-auto">
+          <div className="max-w-[1600px] mx-auto">
             <PreviewPane steps={scaleSteps} />
-            <ScaleTable
-              steps={scaleSteps}
-              displayFont={displayFont}
-              bodyFont={bodyFont}
-              darkMode={darkMode}
-              previewText={previewText}
-            />
           </div>
         ) : (
           <div className="max-w-[1600px] mx-auto">

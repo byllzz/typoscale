@@ -6,6 +6,7 @@ import { initializePresetLibrary } from '../utils/presetManager'
 
 // Theme persistence
 const THEME_STORAGE_KEY = 'typoscale-theme'
+const ACTIVE_TAB_KEY = 'typoscale-active-tab'
 
 const getInitialDarkMode = () => {
   const stored = localStorage.getItem(THEME_STORAGE_KEY)
@@ -13,6 +14,14 @@ const getInitialDarkMode = () => {
     return stored === 'dark'
   }
   return false // default to light mode
+}
+
+const getInitialActiveTab = (): 'preview' | 'tokens' => {
+  const stored = localStorage.getItem(ACTIVE_TAB_KEY)
+  if (stored === 'preview' || stored === 'tokens') {
+    return stored
+  }
+  return 'preview' // default to preview
 }
 
 function encodeState(state: Partial<AppState>): string {
@@ -70,31 +79,40 @@ export const useStore = create<AppStore>((set, get) => ({
   previewText: 'The quick brown fox jumps over the lazy dog',
   darkMode: getInitialDarkMode(),
   outputFormat: 'css' as OutputFormat,
-  activeTab: 'preview' as const,
+  activeTab: getInitialActiveTab(),
 
   setDisplayFont: (displayFont) => {
-    set({ displayFont })
+    set({ displayFont, activeTab: 'preview' }) // Switch to preview
+    localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
   setBodyFont: (bodyFont) => {
-    set({ bodyFont })
+    set({ bodyFont, activeTab: 'preview' }) // Switch to preview
+    localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
-  setMonoFont: (monoFont) => set({ monoFont }),
+  setMonoFont: (monoFont) => {
+    set({ monoFont, activeTab: 'preview' }) // Switch to preview
+    localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
+  },
   setBaseSize: (baseSize) => {
-    set({ baseSize })
+    set({ baseSize, activeTab: 'preview' }) // Switch to preview
+    localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
   setRatio: (ratio) => {
-    set({ ratio })
+    set({ ratio, activeTab: 'preview' }) // Switch to preview
+    localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
   setCustomRatio: (customRatio) => {
-    set({ customRatio })
+    set({ customRatio, activeTab: 'preview' }) // Switch to preview
+    localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
   setSteps: (steps) => {
-    set({ steps })
+    set({ steps, activeTab: 'preview' }) // Switch to preview
+    localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
   setPreviewText: (previewText) => set({ previewText }),
@@ -103,5 +121,8 @@ export const useStore = create<AppStore>((set, get) => ({
     localStorage.setItem(THEME_STORAGE_KEY, darkMode ? 'dark' : 'light')
   },
   setOutputFormat: (outputFormat) => set({ outputFormat }),
-  setActiveTab: (activeTab) => set({ activeTab }),
+  setActiveTab: (activeTab) => {
+    set({ activeTab })
+    localStorage.setItem(ACTIVE_TAB_KEY, activeTab)
+  },
 }))
