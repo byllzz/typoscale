@@ -8,10 +8,10 @@ import { PresetManager } from './PresetManager'
 
 export function MainArea() {
   const {
-    displayFont, bodyFont,
+    // displayFont, bodyFont,
     baseSize, ratio, customRatio, steps,
     darkMode, setDarkMode,
-    previewText,
+    // previewText,
     activeTab, setActiveTab,
   } = useStore()
 
