@@ -3,6 +3,17 @@ import type { ScaleRatio } from '../types/scale'
 import type { OutputFormat } from '../types/output'
 import type { AppState, AppStore } from '../types/store.types'
 
+// Theme persistence
+const THEME_STORAGE_KEY = 'typoscale-theme'
+
+const getInitialDarkMode = () => {
+  const stored = localStorage.getItem(THEME_STORAGE_KEY)
+  if (stored !== null) {
+    return stored === 'dark'
+  }
+  return false // default to light mode
+}
+
 function encodeState(state: Partial<AppState>): string {
   const params = new URLSearchParams()
   if (state.displayFont) params.set('df', state.displayFont)
@@ -53,7 +64,7 @@ export const useStore = create<AppStore>((set, get) => ({
   customRatio: urlState.customRatio ?? 1.333,
   steps: urlState.steps ?? 10,
   previewText: 'The quick brown fox jumps over the lazy dog',
-  darkMode: false,
+  darkMode: getInitialDarkMode(),
   outputFormat: 'css' as OutputFormat,
   activeTab: 'preview' as const,
 
@@ -83,7 +94,10 @@ export const useStore = create<AppStore>((set, get) => ({
     debouncedUpdateURL(get())
   },
   setPreviewText: (previewText) => set({ previewText }),
-  setDarkMode: (darkMode) => set({ darkMode }),
+  setDarkMode: (darkMode) => {
+    set({ darkMode })
+    localStorage.setItem(THEME_STORAGE_KEY, darkMode ? 'dark' : 'light')
+  },
   setOutputFormat: (outputFormat) => set({ outputFormat }),
   setActiveTab: (activeTab) => set({ activeTab }),
 }))

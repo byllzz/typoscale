@@ -16,6 +16,13 @@ body {
   font-family: 'Outfit', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light mode body styles - applied when darkMode is false */
+body.light-mode {
+  background: #fafaf9;
+  color: #1c1917;
 }
 
 /* Subtle custom scrollbar */
@@ -32,6 +39,14 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #44403c;
+}
+
+/* Light mode scrollbar */
+body.light-mode ::-webkit-scrollbar-thumb {
+  background: #d6d3d1;
+}
+body.light-mode ::-webkit-scrollbar-thumb:hover {
+  background: #a8a29e;
 }
 
 /* Range input custom styling */
@@ -63,6 +78,11 @@ input[type="range"]::-moz-range-thumb {
   background: #f59e0b;
   cursor: pointer;
   border: none;
+}
+
+/* Light mode range input */
+body.light-mode input[type="range"] {
+  background: #e7e5e4;
 }
 
 /* Select styling */

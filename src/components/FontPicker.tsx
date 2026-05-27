@@ -1,9 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
-
-
 import type { GoogleFont, FontCategory } from '../types';
-
 import { useFonts, loadGoogleFont } from '../hooks/useFonts'
+import { useStore } from '../store/useStore'
 
 const CATEGORIES: { id: FontCategory; label: string }[] = [
   { id: 'all', label: 'All' },
@@ -23,6 +21,7 @@ interface FontPickerProps {
 export function FontPicker({ label, value, onChange }: FontPickerProps) {
   const [open, setOpen] = useState(false)
   const { filteredFonts, loading, search, setSearch, category, setCategory } = useFonts()
+  const { darkMode } = useStore()
   const dropdownRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
 
@@ -58,17 +57,27 @@ export function FontPicker({ label, value, onChange }: FontPickerProps) {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <label className="block text-xs font-medium text-stone-400 uppercase tracking-widest mb-2">
+      <label className={`block text-xs font-medium uppercase tracking-widest mb-2 transition-colors duration-300 ${
+        darkMode ? 'text-stone-400' : 'text-stone-500'
+      }`}>
         {label}
       </label>
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-stone-900 border border-stone-700 rounded-lg text-left hover:border-amber-500/50 transition-colors group"
+        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border transition-all duration-200 group ${
+          darkMode
+            ? 'bg-stone-900 border-stone-700 hover:border-amber-500/50'
+            : 'bg-white border-stone-300 hover:border-amber-500/50 shadow-sm'
+        }`}
         style={{ fontFamily: `'${value}', serif` }}
       >
-        <span className="text-stone-100 truncate text-lg">{value}</span>
+        <span className={`truncate text-lg transition-colors duration-300 ${
+          darkMode ? 'text-stone-100' : 'text-stone-800'
+        }`}>{value}</span>
         <svg
-          className={`w-4 h-4 text-stone-500 flex-shrink-0 ml-2 transition-transform ${open ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 flex-shrink-0 ml-2 transition-transform duration-200 ${
+            darkMode ? 'text-stone-500' : 'text-stone-400'
+          } ${open ? 'rotate-180' : ''}`}
           fill="none" stroke="currentColor" viewBox="0 0 24 24"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
@@ -76,29 +85,45 @@ export function FontPicker({ label, value, onChange }: FontPickerProps) {
       </button>
 
       {open && (
-        <div className="absolute z-50 top-full mt-2 left-0 right-0 bg-stone-900 border border-stone-700 rounded-xl shadow-2xl shadow-black/50 overflow-hidden">
+        <div className={`absolute z-50 top-full mt-2 left-0 right-0 rounded-xl shadow-2xl overflow-hidden transition-colors duration-300 ${
+          darkMode
+            ? 'bg-stone-900 border border-stone-700 shadow-black/50'
+            : 'bg-white border border-stone-200 shadow-xl'
+        }`}>
           {/* Search */}
-          <div className="p-3 border-b border-stone-800">
+          <div className={`p-3 border-b transition-colors duration-300 ${
+            darkMode ? 'border-stone-800' : 'border-stone-100'
+          }`}>
             <input
               type="text"
               placeholder="Search fonts…"
               value={search}
               onChange={e => setSearch(e.target.value)}
               autoFocus
-              className="w-full bg-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 placeholder-stone-500 border border-stone-700 focus:outline-none focus:border-amber-500/50"
+              className={`w-full rounded-lg px-3 py-2 text-sm transition-colors duration-300 ${
+                darkMode
+                  ? 'bg-stone-800 text-stone-100 placeholder-stone-500 border-stone-700 focus:border-amber-500/50'
+                  : 'bg-stone-50 text-stone-800 placeholder-stone-400 border-stone-200 focus:border-amber-500/50'
+              } border focus:outline-none`}
             />
           </div>
 
           {/* Category tabs */}
-          <div className="flex gap-1 p-2 border-b border-stone-800 overflow-x-auto">
+          <div className={`flex gap-1 p-2 border-b overflow-x-auto transition-colors duration-300 ${
+            darkMode ? 'border-stone-800' : 'border-stone-100'
+          }`}>
             {CATEGORIES.map(cat => (
               <button
                 key={cat.id}
                 onClick={() => setCategory(cat.id)}
-                className={`flex-shrink-0 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                className={`flex-shrink-0 px-3 py-1 rounded-md text-xs font-medium transition-all duration-200 ${
                   category === cat.id
-                    ? 'bg-amber-500 text-stone-900'
-                    : 'text-stone-400 hover:text-stone-200 hover:bg-stone-800'
+                    ? darkMode
+                      ? 'bg-amber-500 text-stone-900'
+                      : 'bg-amber-500 text-white'
+                    : darkMode
+                      ? 'text-stone-400 hover:text-stone-200 hover:bg-stone-800'
+                      : 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'
                 }`}
               >
                 {cat.label}
@@ -108,7 +133,9 @@ export function FontPicker({ label, value, onChange }: FontPickerProps) {
 
           {/* Font list */}
           {loading ? (
-            <div className="p-4 text-center text-stone-500 text-sm">Loading fonts…</div>
+            <div className={`p-4 text-center text-sm transition-colors duration-300 ${
+              darkMode ? 'text-stone-500' : 'text-stone-400'
+            }`}>Loading fonts…</div>
           ) : (
             <ul
               ref={listRef}
@@ -120,8 +147,14 @@ export function FontPicker({ label, value, onChange }: FontPickerProps) {
                   <button
                     data-family={font.family}
                     onClick={() => selectFont(font)}
-                    className={`w-full text-left px-4 py-3 hover:bg-stone-800 transition-colors flex items-center justify-between group ${
-                      value === font.family ? 'bg-stone-800 text-amber-400' : 'text-stone-200'
+                    className={`w-full text-left px-4 py-3 transition-all duration-200 flex items-center justify-between group ${
+                      value === font.family
+                        ? darkMode
+                          ? 'bg-stone-800 text-amber-400'
+                          : 'bg-stone-100 text-amber-600'
+                        : darkMode
+                          ? 'text-stone-200 hover:bg-stone-800'
+                          : 'text-stone-700 hover:bg-stone-50'
                     }`}
                   >
                     <span
@@ -130,12 +163,16 @@ export function FontPicker({ label, value, onChange }: FontPickerProps) {
                     >
                       {font.family}
                     </span>
-                    <span className="text-xs text-stone-600 ml-2 flex-shrink-0">{font.category}</span>
+                    <span className={`text-xs ml-2 flex-shrink-0 transition-colors duration-200 ${
+                      darkMode ? 'text-stone-600' : 'text-stone-400'
+                    }`}>{font.category}</span>
                   </button>
                 </li>
               ))}
               {filteredFonts.length === 0 && (
-                <li className="p-4 text-center text-stone-500 text-sm">No fonts found</li>
+                <li className={`p-4 text-center text-sm transition-colors duration-300 ${
+                  darkMode ? 'text-stone-500' : 'text-stone-400'
+                }`}>No fonts found</li>
               )}
             </ul>
           )}

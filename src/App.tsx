@@ -6,9 +6,18 @@ import { loadGoogleFont } from './hooks/useFonts'
 import { useStore } from './store/useStore'
 
 export default function App() {
-  const { displayFont, bodyFont, monoFont } = useStore()
+  const { displayFont, bodyFont, monoFont, darkMode } = useStore()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+
+  // Apply light mode class to body
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.remove('light-mode')
+    } else {
+      document.body.classList.add('light-mode')
+    }
+  }, [darkMode])
 
   useEffect(() => {
     const checkMobile = () => {
@@ -38,12 +47,16 @@ export default function App() {
   return (
     <>
       <PrismTheme />
-      <div className="flex h-screen overflow-hidden bg-stone-950 relative">
+      <div className="flex h-screen overflow-hidden relative">
         {/* Mobile menu button */}
         {isMobile && (
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="fixed top-4 left-4 z-30 p-2 rounded-lg bg-stone-900 border border-stone-700 text-stone-400 hover:text-amber-400 transition-colors"
+            className={`fixed top-4 left-4 z-30 p-2 rounded-lg border transition-colors ${
+              darkMode
+                ? 'bg-stone-900 border-stone-700 text-stone-400 hover:text-amber-400'
+                : 'bg-white border-stone-200 text-stone-600 hover:text-amber-600 shadow-sm'
+            }`}
             aria-label="Open menu"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

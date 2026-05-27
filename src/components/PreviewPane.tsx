@@ -44,19 +44,19 @@ export function PreviewPane({ steps }: PreviewPaneProps) {
 
   return (
     <div
-      className="rounded-xl overflow-hidden border border-stone-800"
-      style={{ backgroundColor: bg, color: fg }}
+      className="rounded-xl overflow-hidden border transition-colors duration-300"
+      style={{ backgroundColor: bg, color: fg, borderColor: borderColor }}
     >
       {/* Preview text input - responsive: column on small screens */}
-      <div className="border-b px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3" style={{ borderColor }}>
-        <label className="text-xs font-medium uppercase tracking-widest flex-shrink-0" style={{ color: fgMuted }}>
+      <div className="border-b px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 transition-colors duration-300" style={{ borderColor }}>
+        <label className="text-xs font-medium uppercase tracking-widest flex-shrink-0 transition-colors duration-300" style={{ color: fgMuted }}>
           Sample text
         </label>
         <input
           type="text"
           value={previewText}
           onChange={e => setPreviewText(e.target.value)}
-          className="flex-1 w-full sm:w-auto bg-transparent text-sm focus:outline-none min-w-0"
+          className="flex-1 w-full sm:w-auto bg-transparent text-sm focus:outline-none min-w-0 placeholder:text-stone-500"
           style={{ color: fg }}
           placeholder="Type your sample text…"
         />
@@ -66,8 +66,8 @@ export function PreviewPane({ steps }: PreviewPaneProps) {
       <div className="p-5 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
 
         {/* Hero heading */}
-        <div className="border-b pb-6 sm:pb-8" style={{ borderColor }}>
-          <p className="text-xs font-mono uppercase tracking-widest mb-2 sm:mb-3" style={{ color: fgMuted }}>
+        <div className="border-b pb-6 sm:pb-8 transition-colors duration-300" style={{ borderColor }}>
+          <p className="text-xs font-mono uppercase tracking-widest mb-2 sm:mb-3 transition-colors duration-300" style={{ color: fgMuted }}>
             {heroStep.name} · {heroStep.sizePx.toFixed(0)}px
           </p>
           <h1 style={displayStyle(heroStep, true)}>
@@ -77,7 +77,7 @@ export function PreviewPane({ steps }: PreviewPaneProps) {
 
         {/* H1 */}
         <div>
-          <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: fgMuted }}>
+          <p className="text-xs font-mono uppercase tracking-widest mb-2 transition-colors duration-300" style={{ color: fgMuted }}>
             {h1Step.name} · {h1Step.sizePx.toFixed(0)}px
           </p>
           <h2 style={displayStyle(h1Step, true)}>
@@ -88,7 +88,7 @@ export function PreviewPane({ steps }: PreviewPaneProps) {
         {/* H2 + body - responsive grid: 1 column on mobile, 2 on larger */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           <div>
-            <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: fgMuted }}>
+            <p className="text-xs font-mono uppercase tracking-widest mb-2 transition-colors duration-300" style={{ color: fgMuted }}>
               {h2Step.name} · {h2Step.sizePx.toFixed(0)}px
             </p>
             <h3 style={displayStyle(h2Step, true)}>
@@ -96,7 +96,7 @@ export function PreviewPane({ steps }: PreviewPaneProps) {
             </h3>
           </div>
           <div>
-            <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: fgMuted }}>
+            <p className="text-xs font-mono uppercase tracking-widest mb-2 transition-colors duration-300" style={{ color: fgMuted }}>
               {bodyStep.name} · {bodyStep.sizePx.toFixed(0)}px (body)
             </p>
             <p style={displayStyle(bodyStep)}>
@@ -109,15 +109,15 @@ export function PreviewPane({ steps }: PreviewPaneProps) {
         </div>
 
         {/* Small / caption - responsive flex wrap */}
-        <div className="border-t pt-5 sm:pt-6" style={{ borderColor }}>
-          <p className="text-xs font-mono uppercase tracking-widest mb-3" style={{ color: fgMuted }}>
+        <div className="border-t pt-5 sm:pt-6 transition-colors duration-300" style={{ borderColor }}>
+          <p className="text-xs font-mono uppercase tracking-widest mb-3 transition-colors duration-300" style={{ color: fgMuted }}>
             {smStep.name} · {smStep.sizePx.toFixed(0)}px (caption / label)
           </p>
           <div className="flex flex-wrap gap-4 sm:gap-6">
-            <p style={{ ...displayStyle(smStep), color: fgMuted }}>
+            <p className="transition-colors duration-300" style={{ ...displayStyle(smStep), color: fgMuted }}>
               Article published on June 12, 2025 · 5 min read
             </p>
-            <p style={{ ...displayStyle(smStep), color: fgMuted }}>
+            <p className="transition-colors duration-300" style={{ ...displayStyle(smStep), color: fgMuted }}>
               Category: Typography · Design Systems · Frontend
             </p>
           </div>
@@ -125,7 +125,7 @@ export function PreviewPane({ steps }: PreviewPaneProps) {
 
         {/* Mono code */}
         <div>
-          <p className="text-xs font-mono uppercase tracking-widest mb-3" style={{ color: fgMuted }}>
+          <p className="text-xs font-mono uppercase tracking-widest mb-3 transition-colors duration-300" style={{ color: fgMuted }}>
             {codeStep.name} · {codeStep.sizePx.toFixed(0)}px (mono)
           </p>
           <code style={monoStyle(codeStep)}>
@@ -134,8 +134,8 @@ export function PreviewPane({ steps }: PreviewPaneProps) {
         </div>
 
         {/* Full scale strip - horizontal scroll on small screens */}
-        <div className="border-t pt-5 sm:pt-6" style={{ borderColor }}>
-          <p className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: fgMuted }}>
+        <div className="border-t pt-5 sm:pt-6 transition-colors duration-300" style={{ borderColor }}>
+          <p className="text-xs font-mono uppercase tracking-widest mb-4 transition-colors duration-300" style={{ color: fgMuted }}>
             Full scale
           </p>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -143,13 +143,13 @@ export function PreviewPane({ steps }: PreviewPaneProps) {
               {[...steps].reverse().map(step => (
                 <div key={step.name} className="flex items-baseline gap-4">
                   <span
-                    className="font-mono text-xs w-16 flex-shrink-0"
+                    className="font-mono text-xs w-16 flex-shrink-0 transition-colors duration-300"
                     style={{ color: fgMuted }}
                   >
                     {step.name}
                   </span>
                   <span
-                    className="flex-1 truncate"
+                    className="flex-1 truncate transition-colors duration-300"
                     style={{
                       fontFamily: `'${step.size >= 1.5 ? displayFont : bodyFont}', serif`,
                       fontSize: `${Math.min(step.size, 2.5)}rem`,
