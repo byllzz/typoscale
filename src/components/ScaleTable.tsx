@@ -16,12 +16,12 @@ export function ScaleTable({ steps, displayFont, bodyFont, darkMode, previewText
   const textHex = darkMode ? '#fafaf9' : '#1c1917'
 
   // Theme-based border colors
-  const borderColor = darkMode ? 'border-stone-800' : 'border-stone-200'
-  const borderLight = darkMode ? 'border-stone-800/40' : 'border-stone-200/60'
+  // const borderColor = darkMode ? 'border-stone-800' : 'border-stone-200'
+  // const borderLight = darkMode ? 'border-stone-800/40' : 'border-stone-200/60'
 
   // Theme-based text colors
-  const mutedTextColor = darkMode ? 'text-stone-500' : 'text-stone-400'
-  const mutedTextLight = darkMode ? 'text-stone-600' : 'text-stone-500'
+  // const mutedTextColor = darkMode ? 'text-stone-500' : 'text-stone-400'
+  // const mutedTextLight = darkMode ? 'text-stone-600' : 'text-stone-500'
 
   // WCAG badge colors based on theme
   const getBadgeColors = (level: string) => {
