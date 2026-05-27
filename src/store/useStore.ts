@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { ScaleRatio } from '../types/scale'
 import type { OutputFormat } from '../types/output'
 import type { AppState, AppStore } from '../types/store.types'
+import { initializePresetLibrary } from '../utils/presetManager'
 
 // Theme persistence
 const THEME_STORAGE_KEY = 'typoscale-theme'
@@ -54,6 +55,9 @@ function updateURL(state: AppStore) {
   const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname
   window.history.replaceState(null, '', newUrl)
 }
+
+// Initialize preset library
+initializePresetLibrary()
 
 export const useStore = create<AppStore>((set, get) => ({
   displayFont: urlState.displayFont ?? 'Playfair Display',
