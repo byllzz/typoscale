@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-css'
 import 'prismjs/components/prism-javascript'
@@ -8,6 +8,7 @@ import type { ScaleStep, OutputFormat } from '../types';
 import { generateTokens, getLanguage } from '../utils/tokenGenerators'
 import { useClipboard } from '../hooks/useClipboard';
 import { useStore } from '../store/useStore'
+import { Box, Clipboard, TextIcon } from 'lucide-react'
 
 interface TokenOutputProps {
   steps: ScaleStep[]
@@ -22,7 +23,8 @@ const FORMAT_TABS: { id: OutputFormat; label: string; badge?: string }[] = [
 
 export function TokenOutput({ steps }: TokenOutputProps) {
   const { displayFont, bodyFont, monoFont, outputFormat, setOutputFormat, darkMode } = useStore()
-  const { copied, copy } = useClipboard()
+  const { copy } = useClipboard() // Removed 'copied' since it's not used
+  const [copyAllCopied, setCopyAllCopied] = useState(false)
   const codeRef = useRef<HTMLElement>(null)
 
   const tokenString = generateTokens({
@@ -42,12 +44,18 @@ export function TokenOutput({ steps }: TokenOutputProps) {
     }
   }, [tokenString, language])
 
+  const handleCopyAll = async () => {
+    await copy(tokenString)
+    setCopyAllCopied(true)
+    setTimeout(() => setCopyAllCopied(false), 2000)
+  }
+
   return (
-    <div className={`rounded-xl overflow-hidden border flex flex-col transition-colors duration-300 ${
+    <div className={`rounded-xl overflow-hidden border flex flex-col transition-colors duration-300 h-[calc(100vh-200px)] min-h-[621px] ${
       darkMode ? 'border-stone-800 bg-stone-950' : 'border-stone-200 bg-white'
     }`}>
-      {/* Format tabs */}
-      <div className={`flex flex-wrap items-center border-b transition-colors duration-300 ${
+      {/* Format tabs - Fixed header */}
+      <div className={`flex flex-wrap items-center justify-between border-b transition-colors duration-300 flex-shrink-0 ${
         darkMode ? 'border-stone-800 bg-stone-950' : 'border-stone-200 bg-white'
       }`}>
         <div className="flex flex-wrap">
@@ -79,39 +87,39 @@ export function TokenOutput({ steps }: TokenOutputProps) {
           ))}
         </div>
 
-        {/* Copy button */}
-        <div className="flex-1 flex justify-end items-center px-3 sm:px-4 py-2 sm:py-0">
+        {/* Copy All Button */}
+        <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-0">
           <button
-            onClick={() => copy(tokenString)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
-              copied
-                ? 'bg-green-900/50 text-green-400 border border-green-800'
+            onClick={handleCopyAll}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+              copyAllCopied
+                ? 'bg-green-500/20 text-green-500 border border-green-500/50'
                 : darkMode
-                  ? 'bg-stone-800 text-stone-300 border border-stone-700 hover:border-amber-500/50 hover:text-amber-400'
-                  : 'bg-stone-100 text-stone-600 border border-stone-300 hover:border-amber-500/50 hover:text-amber-600'
+                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20'
+                  : 'bg-amber-500/10 text-amber-600 border border-amber-500/30 hover:bg-amber-500/20'
             }`}
           >
-            {copied ? (
+            {copyAllCopied ? (
               <>
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Copied!
               </>
             ) : (
               <>
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
                 </svg>
-                Copy
+                Copy All
               </>
             )}
           </button>
         </div>
       </div>
 
-      {/* Code */}
+      {/* Code - Scrollable area */}
       <div className="overflow-auto flex-1 min-h-0">
         <pre className={`p-4 sm:p-6 text-sm leading-relaxed m-0 transition-colors duration-300 ${
           darkMode ? 'bg-transparent' : 'bg-white'
@@ -123,15 +131,27 @@ export function TokenOutput({ steps }: TokenOutputProps) {
         </pre>
       </div>
 
-      {/* Footer info */}
-      <div className={`border-t px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 transition-colors duration-300 ${
+      {/* Footer info - Fixed bottom */}
+      <div className={`border-t px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 transition-colors duration-300 flex-shrink-0 ${
         darkMode ? 'border-stone-800' : 'border-stone-200'
       }`}>
-        <span className={`text-xs transition-colors duration-300 ${
-          darkMode ? 'text-stone-500' : 'text-stone-400'
-        }`}>
-          {steps.length} steps · {displayFont} + {bodyFont}
-        </span>
+        <div className="flex flex-wrap items-center gap-4 text-xs">
+          <span className={`flex items-center gap-1.5 ${darkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+            <Clipboard size={14} className="flex-shrink-0" />
+            <span>{steps.length} steps</span>
+          </span>
+
+          <span className={`flex items-center gap-1.5 ${darkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+            <TextIcon size={14} className="flex-shrink-0" />
+            <span>{displayFont} + {bodyFont}</span>
+          </span>
+
+          <span className={`flex items-center gap-1.5 ${darkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+            <Box size={14} className="flex-shrink-0" />
+            <span>{tokenString.split('\n').length} lines</span>
+          </span>
+        </div>
+
         <a
           href="https://github.com/byllzz/typoscale"
           target="_blank"
