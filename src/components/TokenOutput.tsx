@@ -23,7 +23,7 @@ const FORMAT_TABS: { id: OutputFormat; label: string; badge?: string }[] = [
 
 export function TokenOutput({ steps }: TokenOutputProps) {
   const { displayFont, bodyFont, monoFont, outputFormat, setOutputFormat, darkMode } = useStore()
-  const { copied, copy } = useClipboard()
+  const { copy } = useClipboard() // Removed 'copied' since it's not used
   const [copyAllCopied, setCopyAllCopied] = useState(false)
   const codeRef = useRef<HTMLElement>(null)
 
