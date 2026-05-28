@@ -9,10 +9,10 @@ interface FluidExportProps {
 }
 
 export function FluidExport({ steps }: FluidExportProps) {
-  const { baseSize, darkMode } = useStore()
+  const { darkMode } = useStore()
   const [copied, setCopied] = useState(false)
 
-  const clampCSS = generateClampCSS(steps, baseSize)
+  const clampCSS = generateClampCSS(steps)
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(clampCSS)
