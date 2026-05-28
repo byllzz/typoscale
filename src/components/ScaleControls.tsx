@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useStore } from '../store/useStore'
 import { FontPicker } from './FontPicker'
 import { SCALE_RATIOS } from '../types'
@@ -29,8 +29,21 @@ export function ScaleControls({ isOpen, onClose, isMobile }: ScaleControlsProps)
     darkMode,
   } = useStore()
 
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  // Initialize state directly from localStorage to prevent layout flashes on load
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedState = localStorage.getItem('typoScale_sidebarCollapsed')
+      return savedState === 'true'
+    }
+    return false
+  })
+
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  // Side-effect to write state changes to the browser vault
+  useEffect(() => {
+    localStorage.setItem('typoScale_sidebarCollapsed', String(isCollapsed))
+  }, [isCollapsed])
 
   // Sidebar structural content layout configuration
   const sidebarContent = (
@@ -99,7 +112,7 @@ export function ScaleControls({ isOpen, onClose, isMobile }: ScaleControlsProps)
           )}
         </section>
 
-        {/*  Scale Controls */}
+        {/* Scale Controls */}
         <section className="flex flex-col">
           {isCollapsed && !isMobile ? (
             <div className={`mx-auto p-2 rounded-lg cursor-pointer transition-colors ${darkMode ? 'text-stone-500 hover:bg-stone-900' : 'text-stone-400 hover:bg-stone-100'}`} onClick={() => setIsCollapsed(false)} title="Scale Configurations">
@@ -199,7 +212,7 @@ export function ScaleControls({ isOpen, onClose, isMobile }: ScaleControlsProps)
           darkMode ? 'border-stone-800' : 'border-stone-200'
         } ${isCollapsed && !isMobile ? 'p-2' : 'px-5 py-4'}`}
       >
-        <ShareButton darkMode={darkMode} isCollapsed={isCollapsed && !isMobile} onExpand={() => setIsCollapsed(false)} />
+        <ShareButton darkMode={darkMode} isCollapsed={isCollapsed && !isMobile} />
       </div>
     </>
   )
@@ -253,10 +266,9 @@ export function ScaleControls({ isOpen, onClose, isMobile }: ScaleControlsProps)
 interface ShareButtonProps {
   darkMode: boolean
   isCollapsed: boolean
-  onExpand: () => void
 }
 
-function ShareButton({ darkMode, isCollapsed, onExpand }: ShareButtonProps) {
+function ShareButton({ darkMode, isCollapsed }: ShareButtonProps) {
   const [copied, setCopied] = useState(false)
 
   async function handleShare() {
