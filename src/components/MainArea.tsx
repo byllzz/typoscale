@@ -8,6 +8,8 @@ import { FluidExport } from './FluidExport'
 import { SCALE_RATIOS } from '../types'
 import { PresetManager } from './PresetManager'
 
+type ActiveTabType = 'preview' | 'responsive' | 'fluid' | 'tokens'
+
 export function MainArea() {
   const {
     baseSize, ratio, customRatio, steps,
@@ -24,12 +26,10 @@ export function MainArea() {
       className="flex-1 flex flex-col min-w-0 overflow-hidden pt-14 md:pt-0 transition-colors duration-300"
       style={{ backgroundColor: darkMode ? '#0c0a09' : '#fafaf9' }}
     >
-      {/* Professional Open-Source Repository Style Header */}
       <div className={`border-b px-4 sm:px-6 py-4 flex flex-col gap-4 flex-shrink-0 transition-colors duration-300 ${
         darkMode ? 'border-stone-800 bg-stone-950/40' : 'border-stone-200 bg-white'
       } backdrop-blur-sm`}>
 
-        {/* Upper Header Row: Repo Title Breadcrumbs & Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <svg className={`w-4 h-4 hidden xs:block ${darkMode ? 'text-stone-500' : 'text-stone-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,11 +45,9 @@ export function MainArea() {
             </div>
           </div>
 
-          {/* Core App Actions Container */}
           <div className="flex flex-wrap items-center gap-2.5">
-            {/* View Tabs Styled like Git Tab Selectors */}
             <div className={`flex rounded-lg p-0.5 border ${darkMode ? 'bg-stone-950 border-stone-800' : 'bg-stone-50 border-stone-200'}`}>
-              {(['preview', 'responsive', 'fluid', 'tokens'] as const).map(tab => (
+              {(['preview', 'responsive', 'fluid', 'tokens'] as const).map((tab: ActiveTabType) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -68,7 +66,6 @@ export function MainArea() {
               ))}
             </div>
 
-            {/* Presets Button */}
             <button
               onClick={() => setIsPresetManagerOpen(true)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 ${
@@ -83,7 +80,6 @@ export function MainArea() {
               <span>Presets</span>
             </button>
 
-            {/* Theme Toggle Button */}
             <div
               onClick={() => setDarkMode(!darkMode)}
               className={`group flex items-center font-mono text-[11px] rounded-lg border overflow-hidden cursor-pointer select-none transition-all duration-300 ${
@@ -106,7 +102,6 @@ export function MainArea() {
               </span>
             </div>
 
-            {/* GitHub Link */}
             <a
               href="https://github.com/byllzz/typoscale"
               target="_blank"
@@ -125,7 +120,6 @@ export function MainArea() {
           </div>
         </div>
 
-        {/* Lower Header Row: Badge Metrics */}
         <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-dashed border-stone-200 dark:border-stone-800/60">
           <Stat label="base-size" value={`${baseSize}rem`} darkMode={darkMode} />
           <Stat label="scale-ratio" value={effectiveRatio.toFixed(3)} darkMode={darkMode} />
@@ -139,7 +133,6 @@ export function MainArea() {
         </div>
       </div>
 
-      {/* Primary Content Target Tabs Area (Fixed p-2! syntax to native !p-2 layout rule) */}
       <div className="flex-1 overflow-hidden !p-2 sm:p-5 flex flex-col min-h-0">
         {activeTab === 'preview' && (
           <div className="max-w-[1600px] w-full mx-auto flex-1 flex flex-col min-h-0">
@@ -166,7 +159,6 @@ export function MainArea() {
         )}
       </div>
 
-      {/* Preset Manager Modal */}
       <PresetManager
         isOpen={isPresetManagerOpen}
         onClose={() => setIsPresetManagerOpen(false)}

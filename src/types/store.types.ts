@@ -1,6 +1,7 @@
-// /src/types/store.types.ts
 import type { ScaleRatio } from './scale'
 import type { OutputFormat } from './output'
+
+export type ActiveTabType = 'preview' | 'responsive' | 'fluid' | 'tokens'
 
 export interface AppState {
   displayFont: string
@@ -13,7 +14,7 @@ export interface AppState {
   previewText: string
   darkMode: boolean
   outputFormat: OutputFormat
-  activeTab: 'preview' | 'tokens'
+  activeTab: ActiveTabType
 }
 
 export interface AppStore extends AppState {
@@ -27,5 +28,5 @@ export interface AppStore extends AppState {
   setPreviewText: (t: string) => void
   setDarkMode: (b: boolean) => void
   setOutputFormat: (f: OutputFormat) => void
-  setActiveTab: (t: 'preview' | 'tokens') => void
+  setActiveTab: (t: ActiveTabType) => void
 }

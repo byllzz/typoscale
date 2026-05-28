@@ -4,27 +4,24 @@ import type { OutputFormat } from '../types/output'
 import type { AppState, AppStore } from '../types/store.types'
 import { initializePresetLibrary } from '../utils/presetManager'
 
-// Theme persistence
 const THEME_STORAGE_KEY = 'typoscale-theme'
 const ACTIVE_TAB_KEY = 'typoscale-active-tab'
 
-//  tab types matching MainArea layouts
 type ActiveTabType = 'preview' | 'responsive' | 'fluid' | 'tokens'
 
 const getInitialDarkMode = () => {
+  if (typeof window === 'undefined') return false
   const stored = localStorage.getItem(THEME_STORAGE_KEY)
-  if (stored !== null) {
-    return stored === 'dark'
-  }
-  return false // default to light mode
+  return stored !== null ? stored === 'dark' : false
 }
 
 const getInitialActiveTab = (): ActiveTabType => {
+  if (typeof window === 'undefined') return 'preview'
   const stored = localStorage.getItem(ACTIVE_TAB_KEY) as ActiveTabType
   if (stored === 'preview' || stored === 'responsive' || stored === 'fluid' || stored === 'tokens') {
     return stored
   }
-  return 'preview' // default to preview
+  return 'preview'
 }
 
 function encodeState(state: Partial<AppState>): string {
@@ -52,7 +49,6 @@ function decodeState(): Partial<AppState> {
 }
 
 const urlState = decodeState()
-
 let urlUpdateTimer: ReturnType<typeof setTimeout> | undefined
 
 function debouncedUpdateURL(state: AppStore) {
@@ -64,12 +60,12 @@ function debouncedUpdateURL(state: AppStore) {
 }
 
 function updateURL(state: AppStore) {
+  if (typeof window === 'undefined') return
   const qs = encodeState(state)
   const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname
   window.history.replaceState(null, '', newUrl)
 }
 
-// Initialize preset library
 initializePresetLibrary()
 
 export const useStore = create<AppStore>((set, get) => ({
