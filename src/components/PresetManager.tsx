@@ -4,12 +4,22 @@ import {
   savePreset,
   deletePreset,
   getPresetLibrary,
-  // loadPreset,
   exportPresetAsFile,
   importPresetFromFile,
   initializePresetLibrary
 } from '../utils/presetManager'
 import type { TypoScalePreset } from '../types/preset'
+import {
+  FolderOpen,
+  Save,
+  UploadCloud,
+  Download,
+  Trash2,
+  RefreshCw,
+  X,
+  Sparkles,
+  Calendar
+} from 'lucide-react'
 
 interface PresetManagerProps {
   isOpen: boolean
@@ -70,11 +80,9 @@ export function PresetManager({ isOpen, onClose }: PresetManagerProps) {
   }
 
   const handleDeletePreset = (id: string, name: string) => {
-    if (confirm(`Delete preset "${name}"?`)) {
-      deletePreset(id)
-      loadPresets()
-      showMessage('success', `Deleted "${name}"`)
-    }
+    deletePreset(id)
+    loadPresets()
+    showMessage('success', `Deleted "${name}"`)
   }
 
   const handleExportPreset = (preset: TypoScalePreset) => {
@@ -85,12 +93,8 @@ export function PresetManager({ isOpen, onClose }: PresetManagerProps) {
   const handleImportPreset = async (file: File) => {
     try {
       const preset = await importPresetFromFile(file)
-      // Check if preset with same ID exists
       const existing = presets.find(p => p.id === preset.id)
       if (existing) {
-        if (!confirm(`Preset "${preset.name}" already exists. Overwrite?`)) {
-          return
-        }
         deletePreset(preset.id)
       }
       savePreset(preset.name, preset.description || '', preset.data as any)
@@ -105,164 +109,223 @@ export function PresetManager({ isOpen, onClose }: PresetManagerProps) {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={onClose} />
-      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90vw] max-w-2xl max-h-[85vh] overflow-hidden rounded-xl shadow-2xl transition-all duration-300"
-        style={{ backgroundColor: store.darkMode ? '#1c1917' : '#ffffff' }}>
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-stone-950/40 backdrop-blur-md z-50 animate-fade-in" onClick={onClose} />
 
-        {/* Header */}
-        <div className={`flex justify-between items-center p-5 border-b ${
-          store.darkMode ? 'border-stone-800' : 'border-stone-200'
+      {/* Modal Viewport Frame */}
+      <div
+        className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[95vw] md:w-[85vw] max-w-4xl h-[90vh] md:h-[75vh] flex flex-col overflow-hidden rounded-2xl border shadow-2xl transition-all duration-300 ${
+          store.darkMode ? 'bg-stone-950 border-stone-850' : 'bg-white border-stone-200'
+        }`}
+      >
+        {/* Header Section */}
+        <div className={`flex justify-between items-center px-4 sm:px-6 py-4 border-b ${
+          store.darkMode ? 'border-stone-900 bg-stone-950' : 'border-stone-100 bg-stone-50/50'
         }`}>
-          <div>
-            <h2 className={`text-lg font-semibold ${store.darkMode ? 'text-stone-100' : 'text-stone-800'}`}>
-              Preset Manager
-            </h2>
-            <p className={`text-xs mt-1 ${store.darkMode ? 'text-stone-500' : 'text-stone-400'}`}>
-              Save, load, and manage your typography scales
-            </p>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className={`p-2 rounded-lg flex-shrink-0 ${store.darkMode ? 'bg-amber-500/10 text-amber-400' : 'bg-amber-500/10 text-amber-600'}`}>
+              <FolderOpen size={18} />
+            </div>
+            <div className="min-w-0">
+              <h2 className={`text-sm sm:text-base font-bold truncate ${store.darkMode ? 'text-stone-100' : 'text-stone-800'}`}>
+                Preset Library
+              </h2>
+              <p className={`text-[11px] font-medium hidden sm:block truncate ${store.darkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+                Archive structural variables, swap layout steps, and share scaling configurations
+              </p>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className={`p-1 rounded-lg transition-colors ${store.darkMode ? 'hover:bg-stone-800' : 'hover:bg-stone-100'}`}
+            className={`p-1.5 rounded-lg border flex-shrink-0 transition-all ${
+              store.darkMode
+                ? 'bg-stone-900 border-stone-800 text-stone-400 hover:text-stone-200'
+                : 'bg-white border-stone-200 text-stone-500 hover:text-stone-800'
+            }`}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <X size={15} />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-5 overflow-y-auto max-h-[calc(85vh-120px)]">
-          {/* Save new preset */}
-          <div className={`mb-6 p-4 rounded-lg ${store.darkMode ? 'bg-stone-900' : 'bg-stone-50'}`}>
-            <h3 className={`text-sm font-medium mb-3 ${store.darkMode ? 'text-stone-300' : 'text-stone-700'}`}>
-              Save Current Configuration
-            </h3>
+        {/* Layout Body columns */}
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+
+          {/* Action Module Workbench Column */}
+          <div className={`w-full md:w-72 p-4 sm:p-5 flex flex-col gap-4 sm:gap-5 overflow-y-auto border-b md:border-b-0 md:border-r flex-shrink-0 ${
+            store.darkMode ? 'border-stone-900 bg-stone-950' : 'border-stone-100 bg-stone-50/20'
+          }`}>
             <div className="space-y-3">
-              <input
-                type="text"
-                placeholder="Preset name"
-                value={presetName}
-                onChange={e => setPresetName(e.target.value)}
-                className={`w-full px-3 py-2 rounded-lg text-sm border focus:outline-none focus:border-amber-500/50 ${
-                  store.darkMode
-                    ? 'bg-stone-800 border-stone-700 text-stone-100'
-                    : 'bg-white border-stone-300 text-stone-800'
-                }`}
-              />
-              <input
-                type="text"
-                placeholder="Description (optional)"
-                value={presetDescription}
-                onChange={e => setPresetDescription(e.target.value)}
-                className={`w-full px-3 py-2 rounded-lg text-sm border focus:outline-none focus:border-amber-500/50 ${
-                  store.darkMode
-                    ? 'bg-stone-800 border-stone-700 text-stone-100'
-                    : 'bg-white border-stone-300 text-stone-800'
-                }`}
-              />
-              <button
-                onClick={handleSavePreset}
-                className="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors"
-              >
-                Save Preset
-              </button>
+              <div className="flex items-center gap-1.5">
+                <Sparkles size={13} className="text-amber-500" />
+                <h3 className={`text-[10px] font-bold uppercase tracking-wider ${store.darkMode ? 'text-stone-400' : 'text-stone-500'}`}>
+                  Save Active Scale
+                </h3>
+              </div>
+
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  placeholder="Preset name"
+                  value={presetName}
+                  onChange={e => setPresetName(e.target.value)}
+                  className={`w-full px-3 py-2 rounded-lg text-xs border font-medium focus:outline-none transition-all ${
+                    store.darkMode
+                      ? 'bg-stone-900 border-stone-800 text-stone-100 focus:border-amber-500/40'
+                      : 'bg-white border-stone-200 text-stone-800 focus:border-amber-500/40'
+                  }`}
+                />
+                <textarea
+                  placeholder="Optional descriptions..."
+                  value={presetDescription}
+                  onChange={e => setPresetDescription(e.target.value)}
+                  rows={2}
+                  className={`w-full px-3 py-2 rounded-lg text-xs border font-medium resize-none focus:outline-none transition-all ${
+                    store.darkMode
+                      ? 'bg-stone-900 border-stone-800 text-stone-100 focus:border-amber-500/40'
+                      : 'bg-white border-stone-200 text-stone-800 focus:border-amber-500/40'
+                  }`}
+                />
+                <button
+                  onClick={handleSavePreset}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition-colors"
+                >
+                  <Save size={13} />
+                  <span>Save Preset</span>
+                </button>
+              </div>
+            </div>
+
+            <hr className={store.darkMode ? 'border-stone-900' : 'border-stone-100'} />
+
+            {/* Import Area Zone */}
+            <div>
+              <label className={`group flex items-center md:flex-col justify-center gap-3 md:gap-1.5 p-3.5 rounded-xl border border-dashed text-left md:text-center cursor-pointer transition-all duration-200 ${
+                store.darkMode
+                  ? 'bg-stone-900/40 border-stone-800 hover:bg-stone-900'
+                  : 'bg-stone-50/50 border-stone-200 hover:bg-stone-50'
+              }`}>
+                <UploadCloud size={18} className={`flex-shrink-0 transition-colors ${store.darkMode ? 'text-stone-500 group-hover:text-amber-400' : 'text-stone-400 group-hover:text-amber-600'}`} />
+                <div className="md:text-center">
+                  <span className={`text-xs font-bold block ${store.darkMode ? 'text-stone-300' : 'text-stone-700'}`}>Import JSON File</span>
+                  <span className={`text-[10px] block mt-0.5 ${store.darkMode ? 'text-stone-500' : 'text-stone-400'}`}>Click to browse configuration files</span>
+                </div>
+                <input
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  onChange={e => {
+                    const file = e.target.files?.[0]
+                    if (file) handleImportPreset(file)
+                    e.target.value = ''
+                  }}
+                />
+              </label>
             </div>
           </div>
 
-          {/* Import/Export buttons */}
-          <div className="flex gap-3 mb-6">
-            <label className={`flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
-              store.darkMode
-                ? 'bg-stone-800 hover:bg-stone-700 text-stone-300'
-                : 'bg-stone-100 hover:bg-stone-200 text-stone-700'
+          {/* Preset Cards Collection Area */}
+          <div className="flex-1 p-4 sm:p-5 overflow-y-auto flex flex-col min-w-0">
+            <h3 className={`text-[10px] font-bold uppercase tracking-wider mb-3.5 flex items-center gap-1.5 ${
+              store.darkMode ? 'text-stone-400' : 'text-stone-500'
             }`}>
-              Import Preset
-              <input
-                type="file"
-                accept=".json"
-                className="hidden"
-                onChange={e => {
-                  const file = e.target.files?.[0]
-                  if (file) handleImportPreset(file)
-                  e.target.value = ''
-                }}
-              />
-            </label>
-          </div>
-
-          {/* Preset list */}
-          <div className="space-y-2">
-            <h3 className={`text-sm font-medium mb-3 ${store.darkMode ? 'text-stone-300' : 'text-stone-700'}`}>
-              Your Presets ({presets.length})
+              <span>Stored Presets</span>
+              <span className={`px-1.5 py-0.2 rounded-full font-mono text-[10px] ${store.darkMode ? 'bg-stone-900 text-stone-400' : 'bg-stone-100 text-stone-600'}`}>
+                {presets.length}
+              </span>
             </h3>
+
             {presets.length === 0 ? (
-              <p className={`text-sm text-center py-8 ${store.darkMode ? 'text-stone-500' : 'text-stone-400'}`}>
-                No presets yet. Save your first preset above!
-              </p>
+              <div className={`flex-1 border border-dashed rounded-xl flex flex-col items-center justify-center p-8 text-center ${
+                store.darkMode ? 'border-stone-900' : 'border-stone-150'
+              }`}>
+                <FolderOpen size={24} className={`mb-2 ${store.darkMode ? 'text-stone-700' : 'text-stone-300'}`} />
+                <p className={`text-xs font-semibold ${store.darkMode ? 'text-stone-400' : 'text-stone-500'}`}>
+                  No stored configurations found
+                </p>
+              </div>
             ) : (
-              presets.map(preset => (
-                <div
-                  key={preset.id}
-                  className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
-                    store.darkMode ? 'bg-stone-900 hover:bg-stone-800' : 'bg-stone-50 hover:bg-stone-100'
-                  }`}
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium truncate ${store.darkMode ? 'text-stone-200' : 'text-stone-700'}`}>
-                      {preset.name}
-                    </p>
-                    {preset.description && (
-                      <p className={`text-xs truncate ${store.darkMode ? 'text-stone-500' : 'text-stone-400'}`}>
-                        {preset.description}
+              /*  Fluid Layout Grid - Single-column on mobile, two-column on desktop screens */
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0 w-full">
+                {presets.map(preset => (
+                  <div
+                    key={preset.id}
+                    className={`group flex flex-col justify-between p-3.5 rounded-xl border transition-all duration-200 ${
+                      store.darkMode
+                        ? 'bg-stone-900/30 border-stone-900 hover:border-stone-800'
+                        : 'bg-stone-50/40 border-stone-100 hover:border-stone-200'
+                    }`}
+                  >
+                    {/* Identity Metadata text */}
+                    <div className="min-w-0 mb-2">
+                      <p className={`text-xs font-bold truncate transition-colors ${store.darkMode ? 'text-stone-200 group-hover:text-amber-400' : 'text-stone-700 group-hover:text-amber-600'}`}>
+                        {preset.name}
                       </p>
-                    )}
-                    <p className={`text-xs mt-1 ${store.darkMode ? 'text-stone-600' : 'text-stone-400'}`}>
-                      {new Date(preset.updatedAt).toLocaleDateString()}
-                    </p>
+                      <p className={`text-[11px] mt-1 line-clamp-2 min-h-[2rem] leading-normal ${store.darkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+                        {preset.description || 'No descriptive metadata context details provided.'}
+                      </p>
+                    </div>
+
+                    {/* Responsive Footer Action Matrix Row */}
+                    <div className={`flex flex-wrap items-center justify-between gap-2 pt-2 border-t mt-1 ${
+                      store.darkMode ? 'border-stone-900/60' : 'border-stone-100'
+                    }`}>
+                      <span className={`text-[9px] font-mono flex items-center gap-1 ${store.darkMode ? 'text-stone-600' : 'text-stone-400'}`}>
+                        <Calendar size={10} className="flex-shrink-0" />
+                        <span>{new Date(preset.updatedAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'})}</span>
+                      </span>
+
+                      {/* Icon Control Group buttons */}
+                      <div className="flex items-center gap-1 ml-auto">
+                        <button
+                          onClick={() => handleLoadPreset(preset)}
+                          className={`p-1.5 rounded-md transition-colors ${
+                            store.darkMode
+                              ? 'bg-stone-950 text-stone-400 hover:text-amber-400'
+                              : 'bg-white text-stone-500 hover:text-amber-600 border border-stone-100'
+                          }`}
+                          title="Apply Preset Scale"
+                        >
+                          <RefreshCw size={11} />
+                        </button>
+                        <button
+                          onClick={() => handleExportPreset(preset)}
+                          className={`p-1.5 rounded-md transition-colors ${
+                            store.darkMode
+                              ? 'bg-stone-950 text-stone-400 hover:text-blue-400'
+                              : 'bg-white text-stone-500 hover:text-blue-600 border border-stone-100'
+                          }`}
+                          title="Download .json file"
+                        >
+                          <Download size={11} />
+                        </button>
+                        <button
+                          onClick={() => handleDeletePreset(preset.id, preset.name)}
+                          className={`p-1.5 rounded-md transition-colors ${
+                            store.darkMode
+                              ? 'bg-stone-950 text-stone-500 hover:text-red-400'
+                              : 'bg-white text-stone-400 hover:text-red-600 border border-stone-100'
+                          }`}
+                          title="Delete Scale Record"
+                        >
+                          <Trash2 size={11} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex gap-1 ml-2">
-                    <button
-                      onClick={() => handleLoadPreset(preset)}
-                      className="p-1.5 rounded hover:bg-amber-500/20 text-amber-500 transition-colors"
-                      title="Load preset"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => handleExportPreset(preset)}
-                      className="p-1.5 rounded hover:bg-blue-500/20 text-blue-500 transition-colors"
-                      title="Export preset"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => handleDeletePreset(preset.id, preset.name)}
-                      className="p-1.5 rounded hover:bg-red-500/20 text-red-500 transition-colors"
-                      title="Delete preset"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
         </div>
 
-        {/* Message toast */}
+        {/* Message Toast Popovers */}
         {message && (
-          <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-lg text-sm font-medium animate-in fade-in slide-in-from-bottom-2 ${
+          <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl text-xs font-bold tracking-wide shadow-xl transition-all duration-300 flex items-center gap-2 border z-50 ${
             message.type === 'success'
-              ? 'bg-green-500 text-white'
-              : 'bg-red-500 text-white'
+              ? 'bg-green-500/10 text-green-500 border-green-500/20'
+              : 'bg-red-500/10 text-red-500 border-red-500/20'
           }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${message.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`} />
             {message.text}
           </div>
         )}
