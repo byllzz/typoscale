@@ -6,22 +6,28 @@ import { loadGoogleFont } from './hooks/useFonts';
 import { useStore } from './store/useStore';
 import { WelcomeNote } from './components/WelcomeNote';
 
+const SESSION_KEY = 'typoscale-note-seen';
+
 export default function App() {
   const { displayFont, bodyFont, monoFont, darkMode } = useStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
 
-  // Auto‑show welcome note only once per session
+  // Show welcome note once per session; never again until tab is closed
   useEffect(() => {
-    const hasSeen = sessionStorage.getItem('typoscale-note-seen');
-    if (!hasSeen) {
+    if (!sessionStorage.getItem(SESSION_KEY)) {
       setIsNoteOpen(true);
-      sessionStorage.setItem('typoscale-note-seen', 'true');
+      sessionStorage.setItem(SESSION_KEY, 'true');
     }
   }, []);
 
-  // Apply light mode class to body
+  const handleCloseNote = () => {
+    setIsNoteOpen(false);
+    // Flag already set on first open; re-setting is a no-op but kept for clarity
+    sessionStorage.setItem(SESSION_KEY, 'true');
+  };
+
   useEffect(() => {
     if (darkMode) {
       document.body.classList.remove('light-mode');
@@ -47,14 +53,8 @@ export default function App() {
   }, [displayFont, bodyFont, monoFont]);
 
   useEffect(() => {
-    if (isMobile && isSidebarOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
+    document.body.style.overflow = isMobile && isSidebarOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
   }, [isMobile, isSidebarOpen]);
 
   return (
@@ -87,7 +87,7 @@ export default function App() {
 
       <WelcomeNote
         isOpen={isNoteOpen}
-        onClose={() => setIsNoteOpen(false)}
+        onClose={handleCloseNote}
         darkMode={darkMode}
       />
     </>
