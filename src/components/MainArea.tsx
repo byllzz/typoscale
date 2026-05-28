@@ -7,10 +7,15 @@ import { ResponsivePreview } from './ResponsivePreview'
 import { FluidExport } from './FluidExport'
 import { SCALE_RATIOS } from '../types'
 import { PresetManager } from './PresetManager'
+import { FileText } from 'lucide-react'
 
 type ActiveTabType = 'preview' | 'responsive' | 'fluid' | 'tokens'
 
-export function MainArea() {
+interface MainAreaProps {
+  onOpenNote?: () => void
+}
+
+export function MainArea({ onOpenNote }: MainAreaProps) {
   const {
     baseSize, ratio, customRatio, steps,
     darkMode, setDarkMode,
@@ -101,6 +106,19 @@ export function MainArea() {
                 {darkMode ? '--env-dark' : '--env-light'}
               </span>
             </div>
+
+            {/* Note Button */}
+            <button
+              onClick={() => onOpenNote?.()}
+              className={`p-1.5 rounded-lg border transition-all duration-200 ${
+                darkMode
+                  ? 'bg-stone-900 border-stone-800 text-stone-400 hover:text-amber-400 hover:bg-stone-800'
+                  : 'bg-white border-stone-200 text-stone-500 hover:text-amber-600 hover:bg-stone-50'
+              }`}
+              aria-label="Show welcome note"
+            >
+              <FileText size={16} />
+            </button>
 
             <a
               href="https://github.com/byllzz/typoscale"

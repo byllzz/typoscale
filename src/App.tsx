@@ -4,11 +4,22 @@ import { MainArea } from './components/MainArea';
 import { PrismTheme } from './components/PrismTheme';
 import { loadGoogleFont } from './hooks/useFonts';
 import { useStore } from './store/useStore';
+import { WelcomeNote } from './components/WelcomeNote';
 
 export default function App() {
   const { displayFont, bodyFont, monoFont, darkMode } = useStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isNoteOpen, setIsNoteOpen] = useState(false);
+
+  // Auto‑show welcome note only once per session
+  useEffect(() => {
+    const hasSeen = sessionStorage.getItem('typoscale-note-seen');
+    if (!hasSeen) {
+      setIsNoteOpen(true);
+      sessionStorage.setItem('typoscale-note-seen', 'true');
+    }
+  }, []);
 
   // Apply light mode class to body
   useEffect(() => {
@@ -49,9 +60,7 @@ export default function App() {
   return (
     <>
       <PrismTheme />
-      {/* h-screen to h-dvh  */}
       <div className="flex h-dvh overflow-hidden relative">
-        {/* Mobile menu button */}
         {isMobile && (
           <button
             onClick={() => setIsSidebarOpen(true)}
@@ -63,12 +72,7 @@ export default function App() {
             aria-label="Open menu"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
         )}
@@ -78,8 +82,14 @@ export default function App() {
           onClose={() => setIsSidebarOpen(false)}
           isMobile={isMobile}
         />
-        <MainArea />
+        <MainArea onOpenNote={() => setIsNoteOpen(true)} />
       </div>
+
+      <WelcomeNote
+        isOpen={isNoteOpen}
+        onClose={() => setIsNoteOpen(false)}
+        darkMode={darkMode}
+      />
     </>
   );
 }
