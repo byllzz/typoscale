@@ -125,14 +125,14 @@ export function MainArea() {
         </div>
       </div>
 
-      {/* Primary content */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-3">
+      {/* Primary content - Adjusted layout architecture here */}
+      <div className="flex-1 overflow-hidden p-4 sm:p-5 flex flex-col min-h-0">
         {activeTab === 'preview' ? (
-          <div className="max-w-[1600px] mx-auto">
+          <div className="max-w-[1600px] w-full mx-auto flex-1 flex flex-col min-h-0">
             <PreviewPane steps={scaleSteps} />
           </div>
         ) : (
-          <div className="max-w-[1600px] mx-auto">
+          <div className="max-w-[1600px] w-full mx-auto flex-1 overflow-y-auto">
             <TokenOutput steps={scaleSteps} />
           </div>
         )}

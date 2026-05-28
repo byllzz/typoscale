@@ -45,7 +45,8 @@ export function PreviewPane({ steps }: PreviewPaneProps) {
 
   return (
     <div
-      className={`rounded-xl overflow-hidden border flex flex-col transition-colors duration-300 h-[calc(100vh-200px)] min-h-[621px] ${
+      /* height calculations below with h-full w-full */
+      className={`rounded-xl overflow-hidden border flex flex-col transition-colors duration-300 h-full w-full ${
         darkMode ? 'border-stone-800 bg-stone-950' : 'border-stone-200 bg-white'
       }`}
       style={{ backgroundColor: bg, color: fg, borderColor: borderColor }}

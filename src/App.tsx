@@ -1,53 +1,56 @@
-import { useEffect, useState } from 'react'
-import { ScaleControls } from './components/ScaleControls'
-import { MainArea } from './components/MainArea'
-import { PrismTheme } from './components/PrismTheme'
-import { loadGoogleFont } from './hooks/useFonts'
-import { useStore } from './store/useStore'
+import { useEffect, useState } from 'react';
+import { ScaleControls } from './components/ScaleControls';
+import { MainArea } from './components/MainArea';
+import { PrismTheme } from './components/PrismTheme';
+import { loadGoogleFont } from './hooks/useFonts';
+import { useStore } from './store/useStore';
 
 export default function App() {
-  const { displayFont, bodyFont, monoFont, darkMode } = useStore()
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
+  const { displayFont, bodyFont, monoFont, darkMode } = useStore();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Apply light mode class to body
   useEffect(() => {
     if (darkMode) {
-      document.body.classList.remove('light-mode')
+      document.body.classList.remove('light-mode');
     } else {
-      document.body.classList.add('light-mode')
+      document.body.classList.add('light-mode');
     }
-  }, [darkMode])
+  }, [darkMode]);
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-      if (window.innerWidth >= 768) setIsSidebarOpen(false)
-    }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) setIsSidebarOpen(false);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
-    loadGoogleFont(displayFont)
-    loadGoogleFont(bodyFont)
-    loadGoogleFont(monoFont)
-  }, [displayFont, bodyFont, monoFont])
+    loadGoogleFont(displayFont);
+    loadGoogleFont(bodyFont);
+    loadGoogleFont(monoFont);
+  }, [displayFont, bodyFont, monoFont]);
 
   useEffect(() => {
     if (isMobile && isSidebarOpen) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = ''
+      document.body.style.overflow = '';
     }
-    return () => { document.body.style.overflow = '' }
-  }, [isMobile, isSidebarOpen])
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobile, isSidebarOpen]);
 
   return (
     <>
       <PrismTheme />
-      <div className="flex h-screen overflow-hidden relative">
+      {/* h-screen to h-dvh  */}
+      <div className="flex h-dvh overflow-hidden relative">
         {/* Mobile menu button */}
         {isMobile && (
           <button
@@ -60,7 +63,12 @@ export default function App() {
             aria-label="Open menu"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
         )}
@@ -73,5 +81,5 @@ export default function App() {
         <MainArea />
       </div>
     </>
-  )
+  );
 }

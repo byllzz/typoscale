@@ -51,7 +51,8 @@ export function TokenOutput({ steps }: TokenOutputProps) {
   }
 
   return (
-    <div className={`rounded-xl overflow-hidden border flex flex-col transition-colors duration-300 h-[calc(100vh-200px)] min-h-[621px] ${
+    /*  height calculations  with h-full w-full */
+    <div className={`rounded-xl overflow-hidden border flex flex-col transition-colors duration-300 h-full w-full ${
       darkMode ? 'border-stone-800 bg-stone-950' : 'border-stone-200 bg-white'
     }`}>
       {/* Format tabs - Fixed header */}
