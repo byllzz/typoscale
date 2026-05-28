@@ -8,6 +8,9 @@ import { initializePresetLibrary } from '../utils/presetManager'
 const THEME_STORAGE_KEY = 'typoscale-theme'
 const ACTIVE_TAB_KEY = 'typoscale-active-tab'
 
+//  tab types matching MainArea layouts
+type ActiveTabType = 'preview' | 'responsive' | 'fluid' | 'tokens'
+
 const getInitialDarkMode = () => {
   const stored = localStorage.getItem(THEME_STORAGE_KEY)
   if (stored !== null) {
@@ -16,9 +19,9 @@ const getInitialDarkMode = () => {
   return false // default to light mode
 }
 
-const getInitialActiveTab = (): 'preview' | 'tokens' => {
-  const stored = localStorage.getItem(ACTIVE_TAB_KEY)
-  if (stored === 'preview' || stored === 'tokens') {
+const getInitialActiveTab = (): ActiveTabType => {
+  const stored = localStorage.getItem(ACTIVE_TAB_KEY) as ActiveTabType
+  if (stored === 'preview' || stored === 'responsive' || stored === 'fluid' || stored === 'tokens') {
     return stored
   }
   return 'preview' // default to preview
@@ -36,6 +39,7 @@ function encodeState(state: Partial<AppState>): string {
 }
 
 function decodeState(): Partial<AppState> {
+  if (typeof window === 'undefined') return {}
   const params = new URLSearchParams(window.location.search)
   const result: Partial<AppState> = {}
   const df = params.get('df'); if (df) result.displayFont = df
@@ -82,36 +86,36 @@ export const useStore = create<AppStore>((set, get) => ({
   activeTab: getInitialActiveTab(),
 
   setDisplayFont: (displayFont) => {
-    set({ displayFont, activeTab: 'preview' }) // Switch to preview
+    set({ displayFont, activeTab: 'preview' })
     localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
   setBodyFont: (bodyFont) => {
-    set({ bodyFont, activeTab: 'preview' }) // Switch to preview
+    set({ bodyFont, activeTab: 'preview' })
     localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
   setMonoFont: (monoFont) => {
-    set({ monoFont, activeTab: 'preview' }) // Switch to preview
+    set({ monoFont, activeTab: 'preview' })
     localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
   },
   setBaseSize: (baseSize) => {
-    set({ baseSize, activeTab: 'preview' }) // Switch to preview
+    set({ baseSize, activeTab: 'preview' })
     localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
   setRatio: (ratio) => {
-    set({ ratio, activeTab: 'preview' }) // Switch to preview
+    set({ ratio, activeTab: 'preview' })
     localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
   setCustomRatio: (customRatio) => {
-    set({ customRatio, activeTab: 'preview' }) // Switch to preview
+    set({ customRatio, activeTab: 'preview' })
     localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },
   setSteps: (steps) => {
-    set({ steps, activeTab: 'preview' }) // Switch to preview
+    set({ steps, activeTab: 'preview' })
     localStorage.setItem(ACTIVE_TAB_KEY, 'preview')
     debouncedUpdateURL(get())
   },

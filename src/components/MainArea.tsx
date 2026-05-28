@@ -3,26 +3,27 @@ import { useStore } from '../store/useStore'
 import { useTypeScale } from '../hooks/useTypeScale'
 import { PreviewPane } from './PreviewPane'
 import { TokenOutput } from './TokenOutput'
+import { ResponsivePreview } from './ResponsivePreview'
+import { FluidExport } from './FluidExport'
 import { SCALE_RATIOS } from '../types'
 import { PresetManager } from './PresetManager'
 
 export function MainArea() {
   const {
-    // displayFont, bodyFont,
     baseSize, ratio, customRatio, steps,
     darkMode, setDarkMode,
-    // previewText,
     activeTab, setActiveTab,
   } = useStore()
 
   const [isPresetManagerOpen, setIsPresetManagerOpen] = useState(false)
   const scaleSteps = useTypeScale({ baseSize, ratio, customRatio, steps })
-  const effectiveRatio = ratio === 'custom' ? customRatio : SCALE_RATIOS[ratio].value
+  const effectiveRatio = ratio === 'custom' ? customRatio : SCALE_RATIOS[ratio]?.value || 0
 
   return (
-    <main className="flex-1 flex flex-col min-w-0 overflow-hidden pt-14 md:pt-0 transition-colors duration-300"
-      style={{ backgroundColor: darkMode ? '#0c0a09' : '#fafaf9' }}>
-
+    <main
+      className="flex-1 flex flex-col min-w-0 overflow-hidden pt-14 md:pt-0 transition-colors duration-300"
+      style={{ backgroundColor: darkMode ? '#0c0a09' : '#fafaf9' }}
+    >
       {/* Professional Open-Source Repository Style Header */}
       <div className={`border-b px-4 sm:px-6 py-4 flex flex-col gap-4 flex-shrink-0 transition-colors duration-300 ${
         darkMode ? 'border-stone-800 bg-stone-950/40' : 'border-stone-200 bg-white'
@@ -48,7 +49,7 @@ export function MainArea() {
           <div className="flex flex-wrap items-center gap-2.5">
             {/* View Tabs Styled like Git Tab Selectors */}
             <div className={`flex rounded-lg p-0.5 border ${darkMode ? 'bg-stone-950 border-stone-800' : 'bg-stone-50 border-stone-200'}`}>
-              {(['preview', 'tokens'] as const).map(tab => (
+              {(['preview', 'responsive', 'fluid', 'tokens'] as const).map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -62,7 +63,7 @@ export function MainArea() {
                         : 'text-stone-500 hover:text-stone-800 border border-transparent'
                   }`}
                 >
-                  {tab}
+                  {tab === 'responsive' ? 'Responsive' : tab === 'fluid' ? 'Fluid CSS' : tab}
                 </button>
               ))}
             </div>
@@ -76,13 +77,13 @@ export function MainArea() {
                   : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50 hover:text-amber-600'
               }`}
             >
-              <svg className="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
               </svg>
               <span>Presets</span>
             </button>
 
-            {/* TWIST/UNIQUE THEME TOGGLE: CLI Runtime Environment Flag Selector */}
+            {/* Theme Toggle Button */}
             <div
               onClick={() => setDarkMode(!darkMode)}
               className={`group flex items-center font-mono text-[11px] rounded-lg border overflow-hidden cursor-pointer select-none transition-all duration-300 ${
@@ -124,27 +125,41 @@ export function MainArea() {
           </div>
         </div>
 
-        {/* Lower Header Row: Open-Source Shield Badges / Metadata Parameters */}
-        <div className="flex flex-wrap items-center gap-2 pt-0.5 border-t border-dashed border-stone-200 dark:border-stone-800/60 pt-3">
+        {/* Lower Header Row: Badge Metrics */}
+        <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-dashed border-stone-200 dark:border-stone-800/60">
           <Stat label="base-size" value={`${baseSize}rem`} darkMode={darkMode} />
           <Stat label="scale-ratio" value={effectiveRatio.toFixed(3)} darkMode={darkMode} />
           <Stat label="total-steps" value={steps.toString()} darkMode={darkMode} className="hidden xs:flex" />
           <Stat
             label="rendered-range"
-            value={`${scaleSteps[0]?.sizePx.toFixed(0)}–${scaleSteps[scaleSteps.length - 1]?.sizePx.toFixed(0)}px`}
+            value={`${scaleSteps[0]?.sizePx?.toFixed(0) || 0}–${scaleSteps[scaleSteps.length - 1]?.sizePx?.toFixed(0) || 0}px`}
             darkMode={darkMode}
             className="hidden sm:flex"
           />
         </div>
       </div>
 
-      {/* Primary content area */}
-      <div className="flex-1 overflow-hidden p-2! sm:p-5 flex flex-col min-h-0">
-        {activeTab === 'preview' ? (
+      {/* Primary Content Target Tabs Area (Fixed p-2! syntax to native !p-2 layout rule) */}
+      <div className="flex-1 overflow-hidden !p-2 sm:p-5 flex flex-col min-h-0">
+        {activeTab === 'preview' && (
           <div className="max-w-[1600px] w-full mx-auto flex-1 flex flex-col min-h-0">
             <PreviewPane steps={scaleSteps} />
           </div>
-        ) : (
+        )}
+
+        {activeTab === 'responsive' && (
+          <div className="max-w-[1600px] w-full mx-auto flex-1 flex flex-col min-h-0">
+            <ResponsivePreview steps={scaleSteps} />
+          </div>
+        )}
+
+        {activeTab === 'fluid' && (
+          <div className="max-w-[1600px] w-full mx-auto flex-1 flex flex-col min-h-0">
+            <FluidExport steps={scaleSteps} />
+          </div>
+        )}
+
+        {activeTab === 'tokens' && (
           <div className="max-w-[1600px] w-full mx-auto flex-1 overflow-y-auto">
             <TokenOutput steps={scaleSteps} />
           </div>
@@ -160,7 +175,6 @@ export function MainArea() {
   )
 }
 
-/* Redesigned Stat component matching classic open-source shield badge layouts */
 function Stat({ label, value, className = '', darkMode }: { label: string; value: string; className?: string; darkMode: boolean }) {
   return (
     <div className={`inline-flex items-center rounded-md text-[11px] font-mono border overflow-hidden transition-all shadow-sm ${
@@ -173,7 +187,7 @@ function Stat({ label, value, className = '', darkMode }: { label: string; value
       }`}>
         {label}
       </span>
-      <span className={`px-2 py-0.5 font-bold ${darkMode ? 'text-amber-400' : 'text-amber-600'}`}>
+      <span className={`px-2 py-0.5 font-bold ${darkMode ? 'text-amber-400' : 'text-amber-400'}`}>
         {value}
       </span>
     </div>
