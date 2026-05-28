@@ -13,7 +13,7 @@
 
 [![Visit TypoScale](https://img.shields.io/badge/Live%20Demo-typoscale-9B72FF?style=flat)](https://typoscale.vercel.app)
 
-<img width="100%" alt="TypoScale Preview" src="./src/assets/previews/Preview1.png" />
+<img width="100%" alt="TypoScale Preview" src="./src/assets/previews/preview1.png" />
 <br />
 <!-- <img width="100%" alt="TypoScale Preview" src="./src/assets/previews/Preview2.png" /> -->
 
