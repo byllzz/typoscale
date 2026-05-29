@@ -212,15 +212,6 @@ typoscale/
 
 ---
 
-<!-- ## Keyboard shortcuts
-
-| Key | Action |
-|-----|--------|
-| `Ctrl / Cmd + C` | Copy current token output |
-| `Ctrl / Cmd + D` | Toggle dark preview |
-
---- -->
-
 ## Tech stack
 
 | Tool | Purpose |
